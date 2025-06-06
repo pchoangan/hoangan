@@ -1,4 +1,4 @@
-use server";
+"use server";
 export async function fetchDataTable() {
   const response = await fetch(
     "https://script.google.com/macros/s/AKfycbxejicC-DhVc40W78Y9_kveg_jVru4TPrXGtUun7L1VHDOa8kUCeYvOjc1DCWIAlw/exec",
