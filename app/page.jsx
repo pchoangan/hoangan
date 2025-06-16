@@ -1,4 +1,5 @@
 import Table from "./table"
+import "./table.css";
 export default function HomePage() {  
   return (
     <main>
