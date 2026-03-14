@@ -134,11 +134,16 @@ export default function Table() {
     try {
       const data = { ...formData };
       data["action"] = action;
-      const result = await fetch('/api/google-sheets', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
+      console.log("Dữ liệu chuẩn bị gửi:", data); // Kiểm tra log tại đây
+
+    const response = await fetch('/api/google-sheets', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json(); // Đừng quên await .json() nhé!
+    return result;
       
       if (result.success == true) {
         setLoading(false);
