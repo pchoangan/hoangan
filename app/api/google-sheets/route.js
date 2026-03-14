@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   //const scriptUrl = process.env.GOOGLE_SCRIPT_URL;
-  const scriptUrl ="https://script.google.com/macros/s/AKfycbxejicC-DhVc40W78Y9_kveg_jVru4TPrXGtUun7L1VHDOa8kUCeYvOjc1DCWIAlw/exec";
+  const scriptUrl ="https://script.google.com/macros/s/AKfycbwuMbl9Mni2sCNvNBkU2gzn7wZCFn5tE1d1kYu1rjLEFd0zB19S85ZLEtB5evCRmLDW/exec";
   try {
     // 1. Gọi đến Google Apps Script
     const response = await fetch(scriptUrl, {
