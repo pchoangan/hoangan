@@ -12,7 +12,8 @@ export default function Table() {
   const [header, setHeader] = useState([]);
   useEffect( () => {
   const fetchData = async () => {
-    const dataSheet = await fetch('/api/google-sheets');
+    const response = await fetch('/api/google-sheets');
+    const dataSheet = await response.json();
     setData(dataSheet);
     setHeader(dataSheet[0]);
     setLoading(false);
