@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 
-import { sendForm } from "./actions"; 
-import { fetchDataTable } from "./actions"; 
+
 
 
 export default function Table() {
