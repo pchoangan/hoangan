@@ -137,8 +137,7 @@ export default function Table() {
       console.log("Dữ liệu chuẩn bị gửi:", data); // Kiểm tra log tại đây
 
     const response = await fetch('/api/google-sheets', {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: "POST"
       body: JSON.stringify(data)
     });
 
