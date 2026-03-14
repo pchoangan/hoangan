@@ -1,94 +1,100 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-export default function DynamicFullstackPage() {
+export default function GoogleSheetsManager() {
   const [rows, setRows] = useState([]);
-  const [headers, setHeaders] = useState([]); // Lưu danh sách tiêu đề
-  const [formData, setFormData] = useState({}); // Object động: { "Tiêu đề 1": "", ... }
+  const [headers, setHeaders] = useState([]);
+  const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const fetchData = async () => {
-    const res = await fetch('/api/google-sheets');
-    const data = await res.json();
-    if (data.length > 0) {
-      setHeaders(data[0]); // Lấy dòng đầu làm Header
-      setRows(data);
-      
-      // Khởi tạo formData với các key là header và value trống
-      const initialForm = {};
-      data[0].forEach(header => { initialForm[header] = ""; });
-      setFormData(initialForm);
+  // 1. Hàm lấy dữ liệu (Tương ứng với GET trong route.js)
+  const loadData = async () => {
+    try {
+      const res = await fetch('/api/google-sheets');
+      const data = await res.json();
+      if (data && data.length > 0) {
+        setHeaders(data[0]); // Lấy dòng tiêu đề
+        setRows(data);
+        
+        // Khởi tạo form động dựa trên headers
+        const init = {};
+        data[0].forEach(h => init[h] = "");
+        setFormData(init);
+      }
+    } catch (err) {
+      console.error("Không thể load dữ liệu");
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { loadData(); }, []);
 
-  // Hàm xử lý khi nhập liệu: cập nhật đúng Key trong object
-  const handleChange = (header, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [header]: value
-    }));
-  };
-
+  // 2. Hàm gửi dữ liệu (Tương ứng với POST trong route.js)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
-    await fetch('/api/google-sheets', {
-      method: 'POST',
-      body: JSON.stringify(formData),
-    });
 
-    alert("Đã thêm dữ liệu thành công!");
-    setLoading(false);
-    fetchData(); // Refresh bảng
+    try {
+      const res = await fetch('/api/google-sheets', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+
+      if (res.ok) {
+        alert("Gửi thành công!");
+        loadData(); // Tải lại bảng sau khi gửi thành công
+      }
+    } catch (err) {
+      alert("Lỗi khi gửi dữ liệu!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <main style={{ padding: '20px', maxWidth: '900px', margin: 'auto', fontFamily: 'sans-serif' }}>
-      <h1>Hệ thống quản lý Sheet tự động</h1>
+    <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
+      <h1>Quản lý Database Google Sheets</h1>
 
-      {/* --- FORM ĐỘNG --- */}
-      <section style={{ marginBottom: '40px', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-        <h3>Thêm dữ liệu mới</h3>
-        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '10px' }}>
-          {headers.map((header) => (
-            <div key={header} style={{ display: 'flex', flexDirection: 'column' }}>
-              <label style={{ fontWeight: 'bold', marginBottom: '5px' }}>{header}:</label>
-              <input
-                type="text"
-                value={formData[header] || ""}
-                onChange={(e) => handleChange(header, e.target.value)}
-                placeholder={`Nhập ${header}...`}
-                style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+      {/* Form tự động sinh ra dựa trên tiêu đề bảng */}
+      <form onSubmit={handleSubmit} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px' }}>
+        <h3>Thêm mới</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          {headers.map(h => (
+            <div key={h}>
+              <label style={{ fontSize: '12px', fontWeight: 'bold' }}>{h}</label>
+              <input 
+                style={{ width: '100%', padding: '8px', marginTop: '4px' }}
+                value={formData[h] || ''} 
+                onChange={e => setFormData({...formData, [h]: e.target.value})}
                 required
               />
             </div>
           ))}
-          <button 
-            type="submit" 
-            disabled={loading}
-            style={{ marginTop: '10px', padding: '10px', backgroundColor: '#0070f3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-          >
-            {loading ? "Đang gửi..." : "Gửi dữ liệu"}
-          </button>
-        </form>
-      </section>
+        </div>
+        <button 
+          type="submit" 
+          disabled={loading}
+          style={{ marginTop: '15px', width: '100%', padding: '10px', backgroundColor: '#000', color: '#fff', cursor: 'pointer' }}
+        >
+          {loading ? "Đang xử lý..." : "Gửi dữ liệu"}
+        </button>
+      </form>
 
-      {/* --- BẢNG DỮ LIỆU --- */}
-      <div style={{ overflowX: 'auto' }}>
-        <table border="1" cellPadding="10" style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead style={{ backgroundColor: '#333', color: 'white' }}>
-            <tr>{headers.map((h, i) => <th key={i}>{h}</th>)}</tr>
-          </thead>
-          <tbody>
-            {rows.slice(1).map((row, i) => (
-              <tr key={i}>{row.map((cell, j) => <td key={j}>{cell}</td>)}</tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </main>
+      {/* Bảng hiển thị */}
+      <table border="1" style={{ width: '100%', marginTop: '30px', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr style={{ background: '#f5f5f5' }}>
+            {headers.map(h => <th key={h} style={{ padding: '10px' }}>{h}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.slice(1).map((row, i) => (
+            <tr key={i}>
+              {row.map((cell, j) => <td key={j} style={{ padding: '10px' }}>{cell}</td>)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
