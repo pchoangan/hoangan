@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 //const SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL;
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwuMbl9Mni2sCNvNBkU2gzn7wZCFn5tE1d1kYu1rjLEFd0zB19S85ZLEtB5evCRmLDW/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxejicC-DhVc40W78Y9_kveg_jVru4TPrXGtUun7L1VHDOa8kUCeYvOjc1DCWIAlw/exec";
 
 
 export async function GET() {
