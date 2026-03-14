@@ -141,7 +141,7 @@ export default function Table() {
     });
 
     const result = await response.json(); // Đừng quên await .json() nhé!
-    return result;
+    
       
       if (result.success == true) {
         setLoading(false);
