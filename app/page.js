@@ -134,7 +134,11 @@ export default function Table() {
     try {
       const data = { ...formData };
       data["action"] = action;
-      const result = await sendForm(data);
+      const result = await fetch('/api/google-sheets', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
       
       if (result.success == true) {
         setLoading(false);
