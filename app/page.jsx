@@ -252,7 +252,7 @@ export default function Table() {
         ))}
            {errorRow ? (
          <button onClick={() => setErrorRow([])}>ClearCatch</button>
-      ):""}
+      ):(<p></p>)}
         </tbody>
       </table>
         )}
