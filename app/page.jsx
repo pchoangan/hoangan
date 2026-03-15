@@ -250,6 +250,7 @@ export default function Table() {
             <td>{rowData[2]}</td>
           </tr>
         ))}
+           <button onClick={() => setErrorRow([])}>ClearCatch</button>
         </tbody>
       </table>
         )}
